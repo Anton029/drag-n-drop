@@ -1,0 +1,11 @@
+.boardWrapper {
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    width: 100%;
+    height: calc(100vh - 90px);
+    bottom: 0px;
+    padding: 10px;
+    overflow: auto;
+    overflow-y: hidden;
+}
