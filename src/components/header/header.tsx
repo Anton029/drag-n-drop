@@ -1,12 +1,56 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styles from './style.module.css';
+import { getRandomID } from '../../utils/randomID';
+
+import { globalStateContext } from '../../globalState/globalState';
 
 export const Header = () => {
-    return (
+
+	const globalState = useContext(globalStateContext)
+
+	const { boards, setBoards } = globalState
+
+	const addBoardHandler = () => {
+		let newBoards = [...boards]
+
+		let maxOrderNumber = 0
+
+		newBoards.forEach(e => {
+			if(e.orderNumber > maxOrderNumber) {
+				maxOrderNumber = e.orderNumber
+			}
+		})
+
+		maxOrderNumber += 1
+
+		newBoards.push(
+			{
+				boardTitle: 'Test',
+				id: getRandomID(5, 10),
+				orderNumber: maxOrderNumber,
+				cardsList: [],
+				editMod: true
+			}
+		)
+
+		console.log(newBoards)
+		setBoards(newBoards)
+	}
+
+	return (
 		<div className={styles.headerWrapper}>
 			<div className={styles.logoWrapper}>
 				<div className={styles.logo}></div>
-				<div className={styles.logoTitle}>React drag-n-drop todo</div>
+				<div className={styles.logoTitle}>React boardsSpace</div>
+			</div>
+			<div 
+				className={styles.addBoardButtonWrapper}
+				onClick={() => addBoardHandler()}
+			>
+				<p>Добавить карточку</p>
+				<div className={styles.addBoardButton}>
+					+
+				</div>
 			</div>
 		</div>
     );

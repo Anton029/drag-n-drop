@@ -6,105 +6,39 @@ import { globalStateContext } from './globalState/globalState';
 
 function App() {
 
-	const [boards, setBoards] = useState(
-		[
-			{
-				boardTitle: "Список покупок",
-				id: '123123',
-				cardsList: [
-					{
-						title: 'Title',
-						description: 'Text',
-						id: 'asd_12'
-					},
-					{
-						title: 'Title2',
-						description: 'Text2',
-						id: 'asd_13'
-					},
-					{
-						title: 'Title3',
-						description: 'Text3',
-						id: 'asd_14'
-					},
-				],
-			}, 
-			{
-				boardTitle: "Планы на лето",
-				id: 'asd_1w23123',
-				cardsList: [
-					{
-						title: 'Title',
-						description: 'Text',
-						id: 'asd_122'
-					},
-					{
-						title: 'Title2',
-						description: 'Text2',
-						id: 'asd_133'
-					},
-					{
-						title: 'Title3',
-						description: 'Text3',
-						id: 'asd_144'
-					},
-				],
-			}, 
-			{
-				boardTitle: "Вопросы собеседование",
-				id: '12312123',
-				cardsList: [
-					{
-						title: 'Title',
-						description: 'Text',
-						id: 'asd_12122'
-					},
-					{
-						title: 'Title2',
-						description: 'Text2',
-						id: 'as11qd_131'
-					},
-					{
-						title: 'Title3',
-						description: 'Text3',
-						id: 'asd_14112'
-					},
-					{
-						title: 'Title4',
-						description: 'Text',
-						id: '1231aqsda'
-					},
-					{
-						title: 'Title5',
-						description: 'Text2',
-						id: 'asd_w131'
-					},
-					{
-						title: 'Title6',
-						description: 'Text3',
-						id: 'asdqq_141'
-					},{
-						title: 'Title7',
-						description: 'Text',
-						id: 'aszaw2'
-					},
-					{
-						title: 'Title8',
-						description: 'Text2',
-						id: 'as1ad_131'
-					},
-					{
-						title: 'Title9',
-						description: 'Text3',
-						id: 'asd_11q41'
-					},
-				],
-			},
-	]
-	)
+	const [dragCard, setDragCard] = useState({})
+	const [dragColumn, setDragColumn] = useState({})
+	const [columnDragLock, setColumnDragLock] = useState(false)
+	const [ cardDragLock, setCardDragLock ] = useState(false)
+
+	let localStorageBoards = JSON.parse(localStorage.boardsList)
+
+
+	// localStorageBoards = localStorageBoards.map((e, i) => {
+	// 	return {...e, ...{orderNumber: i}}
+	// })
+
+	// localStorage.boardsList = JSON.stringify(localStorageBoards)
+	
+	console.log(localStorageBoards)
+
+	const [boards, setBoards] = useState(localStorageBoards)
+
+	const globalState = { 	
+							boards: boards, 
+							setBoards: setBoards, 
+							dragCard: dragCard, 
+							setDragCard: setDragCard, 
+							dragColumn: dragColumn, 
+							setDragColumn: setDragColumn,
+							columnDragLock: columnDragLock,
+							setColumnDragLock: setColumnDragLock,
+							cardDragLock: cardDragLock, 
+							setCardDragLock: setCardDragLock
+						}
 
 	return (
-		<globalStateContext.Provider value={[boards, setBoards]}>
+		<globalStateContext.Provider value={globalState}>
 			<div className="App">
 				<div className={styles.boardBG}>
 					<Header />
