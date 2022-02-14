@@ -34,7 +34,6 @@ export const BoardItem = (props: AllProps) => {
     }
 
     const dragEndHandler = () => {
-        console.log('end drag')
         setCardDragLock(false)
     }
 
@@ -51,20 +50,23 @@ export const BoardItem = (props: AllProps) => {
                 return {...e, ...{cardsList: e.cardsList.filter(item => item.id != dragCard.id)}}
             })
     
-            newBoards.forEach(e => {
-                if(e.id == props.parentBoardID){
-                    let boardList = e.cardsList
+            newBoards.forEach(board => {
+                if(board.boardID === card.parentBoardID){
+                    let boardList = board.cardsList
 
-                    for(let i = 0; i < boardList.length; i++){
-                        if(boardList[i].id == card.id) {
-                            boardList.splice(i + 1, 0, dragCard)
-                            break
+                    if(boardList.length > 0){
+                        for(let i = 0; i < boardList.length; i++){
+                            if(boardList[i].id == card.id) {
+                                boardList.splice(i, 0, dragCard)
+                                break
+                            }
                         }
+                    }
+                    else {
+                        newBoards.push(dragCard)
                     }
                 }
             })
-
-            newBoards.push()
 
             setBoards(newBoards)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
@@ -82,7 +84,7 @@ export const BoardItem = (props: AllProps) => {
         })
 
         newBoards.forEach(e => {
-            if(e.id == props.parentBoardID){
+            if(e.boardID == props.parentBoardID){
                 e.cardsList.push(dragCard)
             }
         })
@@ -103,11 +105,13 @@ export const BoardItem = (props: AllProps) => {
 
 
         newBoards = newBoards.map(e => {
-            return {...e, ...{cardsList: e.cardsList.filter(item => item.id != props.id)}}
+            return {...e, ...{cardsList: e.cardsList.filter(item => item.id !== props.id)}}
         })
 
         setBoards(newBoards)
         localStorage.setItem('boardsList', JSON.stringify(newBoards))
+        setCardDragLock(false)
+        setColumnDragLock(false)
     }
 
     const [ cardEditMod, setCardEditMod ] = useState(props.editMod)
@@ -119,27 +123,23 @@ export const BoardItem = (props: AllProps) => {
 
     const cardEditModHandler = () => {
 
-        // let newBoards = [...boards]
+        let newBoards = [...boards]
 
-        // newBoards = newBoards.map(board => {
-        //     if(board.id == props.parentBoardID){
-        //         board.cardsList = board.cardsList.map(e => 
-        //             {
-        //                 if(e.id == props.id) {
-        //                     return {...e, ...{editMod: !cardEditMod}}
-        //                 }
-        //                 else return e
-        //             }
-        //         )
-        //     }
-        //     return board
-        // })
+        newBoards = newBoards.map(board => {
+            if(board.id == props.parentBoardID){
+                board.cardsList = board.cardsList.map(e => 
+                    {
+                        if(e.id == props.id) {
+                            return {...e, ...{editMod: !cardEditMod}}
+                        }
+                        else return e
+                    }
+                )
+            }
+            return board
+        })
 
-        // console.log(newBoards)
-
-        // localStorage.setItem('boardsList', JSON.stringify(newBoards))
-
-        
+        localStorage.setItem('boardsList', JSON.stringify(newBoards))
         setCardEditMod(!cardEditMod)
         setOptionsPopupOpen(false)
     }
@@ -170,7 +170,7 @@ export const BoardItem = (props: AllProps) => {
             let newBoards = [...boards]
 
             newBoards = newBoards.map(board => {
-                if(board.id == props.parentBoardID){
+                if(board.boardID == props.parentBoardID){
                     board.cardsList = board.cardsList.map(e => 
                         {
                             if(e.id == props.id) {
@@ -183,7 +183,6 @@ export const BoardItem = (props: AllProps) => {
                 return board
             })
 
-            console.log(newBoards)
             setBoards(newBoards)
             setCardEditMod(false)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))

@@ -13,17 +13,8 @@ function App() {
 
 	let localStorageBoards = JSON.parse(localStorage.boardsList)
 
-
-	// localStorageBoards = localStorageBoards.map((e, i) => {
-	// 	return {...e, ...{orderNumber: i}}
-	// })
-
-	// localStorage.boardsList = JSON.stringify(localStorageBoards)
-	
-	console.log(localStorageBoards)
-
 	const [boards, setBoards] = useState(localStorageBoards)
-
+	
 	const globalState = { 	
 							boards: boards, 
 							setBoards: setBoards, 

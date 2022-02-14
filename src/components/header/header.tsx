@@ -13,27 +13,13 @@ export const Header = () => {
 	const addBoardHandler = () => {
 		let newBoards = [...boards]
 
-		let maxOrderNumber = 0
-
-		newBoards.forEach(e => {
-			if(e.orderNumber > maxOrderNumber) {
-				maxOrderNumber = e.orderNumber
-			}
+		newBoards.splice(0, 0, {
+			boardTitle: '',
+			boardID: getRandomID(5, 10),
+			cardsList: [],
+			editMod: true
 		})
 
-		maxOrderNumber += 1
-
-		newBoards.push(
-			{
-				boardTitle: 'Test',
-				id: getRandomID(5, 10),
-				orderNumber: maxOrderNumber,
-				cardsList: [],
-				editMod: true
-			}
-		)
-
-		console.log(newBoards)
 		setBoards(newBoards)
 	}
 

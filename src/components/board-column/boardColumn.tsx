@@ -7,7 +7,7 @@ import { BoardItem } from '../board-item/boardItem';
 import { getRandomID } from '../../utils/randomID';
 
 interface AllProps {
-	title: string,
+	boardTitle: string,
 	boardID: string,
 	cardsList: [
 		{   title: string,
@@ -16,8 +16,17 @@ interface AllProps {
 			editMod: boolean
 		}
 	],
-	orderNumber: number,
 	editMod: boolean
+}
+
+const dragOverHandler = (e) => {
+    e.preventDefault()
+    // e.target.classList.add(`${styles.columnDragOver}`)
+}
+
+const dragLeaveHandler = (e) => {
+    e.preventDefault()
+    // e.target.classList.remove(`${styles.columnDragOver}`)
 }
 
 export const BoardColumn = (props: AllProps) => {
@@ -30,38 +39,30 @@ export const BoardColumn = (props: AllProps) => {
 		setDragColumn(props)
 	}
 
-	const dropHandler = () => {
-		if(!columnDragLock){
-			let newBoards = [...boards]
-
-			const oldOrderNumber = dragColumn.orderNumber
-			const newOrderNumber = props.orderNumber
+	const dropHandler = (e, card) => {
+		if(!columnDragLock && card.boardID !== dragColumn.boardID){
 			
-			newBoards = newBoards.map(e => {
-				if(e.orderNumber == oldOrderNumber) {
-					return {...e, ...{orderNumber: newOrderNumber}}
+			let newBoards = [...boards]
+			
+			newBoards = newBoards.filter(e => e.boardID !== dragColumn.boardID)
+			
+			for(let i = 0; i < newBoards.length; i++) {
+				if(newBoards[i].boardID == card.boardID) {
+					newBoards.splice(i, 0, dragColumn)
+					break
 				}
-				else if(e.orderNumber == newOrderNumber){
-					return {...e, ...{orderNumber: oldOrderNumber}}
-				}
-				else return e
-			})
-	
-			newBoards = newBoards.sort((a, b) => a.orderNumber - b.orderNumber)
+			}
+
 			setBoards(newBoards)
 			localStorage.setItem('boardsList', JSON.stringify(newBoards))
 		}
-	}
-
-	const dragOverHandler = (e) => {
-		e.preventDefault()
 	}
 
 	const addEmptyCardHandler = () => {
 		let newBoards = [...boards]
 
 		newBoards.forEach(board => {
-			if(board.id == props.boardID){
+			if(board.boardID == props.boardID){
 				board.cardsList.push(
 					{
 						title: '',
@@ -73,7 +74,6 @@ export const BoardColumn = (props: AllProps) => {
 			}
 		})
 
-		console.log(newBoards)
 		setBoards(newBoards)
 	}
 
@@ -89,15 +89,17 @@ export const BoardColumn = (props: AllProps) => {
 
 	const pointerMod = cardDragLock || columnDragLock ? `${styles.noPointerEvents}`: '';
 
-	const [ titleInput, setTitleInput ] = useState(props.title)
+	const [ titleInput, setTitleInput ] = useState(props.boardTitle)
 
 	const [ placeholderError, setPlaceholderError ] = useState(false)
+	const placeholderMod = placeholderError ? `${styles.placeholderError}` : ''
+
 
 	const boardTitleInputHandler = (value) => {
         setTitleInput(value)
-        // if(titleInput != '') {
-        //     setPlaceholderError(false)
-        // }
+        if(titleInput != '') {
+            setPlaceholderError(false)
+        }
     }
 
 	const acceptEditBoardHandler = () => {
@@ -106,19 +108,19 @@ export const BoardColumn = (props: AllProps) => {
 			let newBoards = [...boards]
 
             newBoards = newBoards.map(board => {
-                if(board.id == props.boardID){
+                if(board.boardID == props.boardID){
 					return {...board, ...{boardTitle: titleInput, editMod: false}}
                 }
                 return board
             })
 
-            console.log(newBoards)
             setBoards(newBoards)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
 			
-			setBoardEditMod(!boardEditMod)
+			setBoardEditMod(false)
 			setOptionsPopupOpen(false)
-		}
+		} 
+		else setPlaceholderError(true)
     }
 
 	const boardEditModHandler = () => {
@@ -129,7 +131,7 @@ export const BoardColumn = (props: AllProps) => {
 	const deleteBoardHanlder = () => {
 		let newBoards = [...boards]
 
-		newBoards = newBoards.filter(board => board.id != props.boardID)
+		newBoards = newBoards.filter(board => board.boardID != props.boardID)
 		setBoards(newBoards)
 		localStorage.setItem('boardsList', JSON.stringify(newBoards))
 	}
@@ -139,26 +141,30 @@ export const BoardColumn = (props: AllProps) => {
 			className={styles.columnWrapper}
 			draggable={true}
 			onDragStart={() => dragStartHandler()}
-			onDrop={e => dropHandler()}
+			onDrop={e => dropHandler(e, props)}
 			onDragOver={e => dragOverHandler(e)}
+			onDragLeave={e => dragLeaveHandler(e)}
 		>
 			<div className={styles.columnTitleWrapper}>
 				{!boardEditMod ? 
 					<div className={styles.columnTitle}>
-						{props.title}
+						{props.boardTitle}
 					</div>
 					:
 					<div className={styles.columnTitleInputWrapper}>
-						<input 
+						<input
+							className={placeholderMod}
 							type={'text'} 
-							value={titleInput} 
+							value={titleInput}
+							placeholder={'Введите заголовок'}
 							onChange={(e) => boardTitleInputHandler(e.target.value)}
 						/>
 					</div>
 				}
-				<div
-						className={classNames(styles.optionsButton, pointerMod)}
-						draggable={false}
+				{!boardEditMod &&
+					<div
+							className={classNames(styles.optionsButton, pointerMod)}
+							draggable={false}
 					>
 						<div 
 							className={classNames(styles.settingsPopup, settingsPopupMod)}
@@ -185,6 +191,7 @@ export const BoardColumn = (props: AllProps) => {
 							...
 						</div>
 					</div>
+				}
 				{boardEditMod &&
 					<div 
 						className={classNames(styles.acceptEdit, pointerMod)}
