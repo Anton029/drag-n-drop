@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/Anton029/drag-n-drop/static/css/main.b6ef42ea.css",
+    "main.js": "/Anton029/drag-n-drop/static/js/main.2f8f4af5.js",
+    "static/js/787.a41b8c1c.chunk.js": "/Anton029/drag-n-drop/static/js/787.a41b8c1c.chunk.js",
+    "static/media/board_bg.jpg": "/Anton029/drag-n-drop/static/media/board_bg.e4bd6fbad1cb28724a33.jpg",
+    "static/media/react.svg": "/Anton029/drag-n-drop/static/media/react.3adc4d153dba4c791b00.svg",
+    "index.html": "/Anton029/drag-n-drop/index.html",
+    "main.b6ef42ea.css.map": "/Anton029/drag-n-drop/static/css/main.b6ef42ea.css.map",
+    "main.2f8f4af5.js.map": "/Anton029/drag-n-drop/static/js/main.2f8f4af5.js.map",
+    "787.a41b8c1c.chunk.js.map": "/Anton029/drag-n-drop/static/js/787.a41b8c1c.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b6ef42ea.css",
+    "static/js/main.2f8f4af5.js"
+  ]
+}
