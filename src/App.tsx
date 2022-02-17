@@ -6,12 +6,13 @@ import { globalStateContext } from './globalState/globalState';
 
 function App() {
 
-	const [dragCard, setDragCard] = useState({})
-	const [dragColumn, setDragColumn] = useState({})
-	const [columnDragLock, setColumnDragLock] = useState(false)
+	const [ dragCard, setDragCard ] = useState({})
+	const [ dragColumn, setDragColumn ] = useState({})
+	const [ columnDropLock, setColumnDropLock ] = useState(false)
 	const [ cardDragLock, setCardDragLock ] = useState(false)
+	const [ cardDropLock, setCardDropLock ] = useState(false)
 
-	let localStorageBoards = JSON.parse(localStorage.boardsList)
+	let localStorageBoards = JSON.parse(localStorage.boardsList ? localStorage.boardsList : '[]')
 
 	const [boards, setBoards] = useState(localStorageBoards)
 	
@@ -22,10 +23,12 @@ function App() {
 							setDragCard: setDragCard, 
 							dragColumn: dragColumn, 
 							setDragColumn: setDragColumn,
-							columnDragLock: columnDragLock,
-							setColumnDragLock: setColumnDragLock,
+							columnDropLock: columnDropLock,
+							setColumnDropLock: setColumnDropLock,
 							cardDragLock: cardDragLock, 
-							setCardDragLock: setCardDragLock
+							setCardDragLock: setCardDragLock,
+							cardDropLock: cardDropLock,
+							setCardDropLock: setCardDropLock,
 						}
 
 	return (

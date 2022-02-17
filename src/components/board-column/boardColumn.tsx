@@ -33,14 +33,19 @@ export const BoardColumn = (props: AllProps) => {
 
 	const globalState = useContext(globalStateContext)
 
-	const { boards, setBoards, setDragColumn, dragColumn, columnDragLock, setColumnDragLock, cardDragLock, setCardDragLock } = globalState
+	const { boards, setBoards, setDragColumn, dragColumn, columnDropLock, cardDragLock, setCardDropLock } = globalState
 
 	const dragStartHandler = () => {
-		setDragColumn(props)
+		if(!cardDragLock) {
+			setDragColumn(props)
+			setCardDropLock(true)
+			console.log(boards)
+		}
 	}
 
 	const dropHandler = (e, card) => {
-		if(!columnDragLock && card.boardID !== dragColumn.boardID){
+		setCardDropLock(false)
+		if(!columnDropLock && card.boardID !== dragColumn.boardID){
 			
 			let newBoards = [...boards]
 			
@@ -52,6 +57,8 @@ export const BoardColumn = (props: AllProps) => {
 					break
 				}
 			}
+
+			console.log(newBoards)
 
 			setBoards(newBoards)
 			localStorage.setItem('boardsList', JSON.stringify(newBoards))
@@ -87,7 +94,7 @@ export const BoardColumn = (props: AllProps) => {
 		setOptionsPopupOpen(!optionsPopupOpen)
 	}
 
-	const pointerMod = cardDragLock || columnDragLock ? `${styles.noPointerEvents}`: '';
+	const pointerMod = cardDragLock || columnDropLock ? `${styles.noPointerEvents}`: '';
 
 	const [ titleInput, setTitleInput ] = useState(props.boardTitle)
 
@@ -111,7 +118,7 @@ export const BoardColumn = (props: AllProps) => {
                 if(board.boardID == props.boardID){
 					return {...board, ...{boardTitle: titleInput, editMod: false}}
                 }
-                return board
+                else return board
             })
 
             setBoards(newBoards)
@@ -141,6 +148,7 @@ export const BoardColumn = (props: AllProps) => {
 			className={styles.columnWrapper}
 			draggable={true}
 			onDragStart={() => dragStartHandler()}
+			onDragEnd={() => setCardDropLock(false)}
 			onDrop={e => dropHandler(e, props)}
 			onDragOver={e => dragOverHandler(e)}
 			onDragLeave={e => dragLeaveHandler(e)}

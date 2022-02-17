@@ -78,3 +78,13 @@
     font-weight: 500;
     user-select: none;
 }
+
+@media screen and (max-width: 640px) {
+    .addBoardButtonWrapper p {
+        display: none;
+    }
+
+    .headerWrapper {
+        padding: 0px 10px;
+    }
+}
