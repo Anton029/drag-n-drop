@@ -23,13 +23,13 @@ export const Header = () => {
 
 		maxOrderNumber += 1
 
-		newBoards.push(
+		newBoards.splice(0, 0, 
 			{
-				boardTitle: 'Test',
-				id: getRandomID(5, 10),
-				orderNumber: maxOrderNumber,
-				cardsList: [],
-				editMod: true
+			boardTitle: '',
+			id: getRandomID(5, 10),
+			orderNumber: maxOrderNumber,
+			cardsList: [],
+			editMod: true
 			}
 		)
 
@@ -47,7 +47,7 @@ export const Header = () => {
 				className={styles.addBoardButtonWrapper}
 				onClick={() => addBoardHandler()}
 			>
-				<p>Добавить карточку</p>
+				<p>Добавить колонку</p>
 				<div className={styles.addBoardButton}>
 					+
 				</div>

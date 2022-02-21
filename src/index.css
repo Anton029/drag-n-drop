@@ -16,6 +16,8 @@ code {
 	box-sizing: border-box;
 	background-repeat: no-repeat;
 	background-position: center;
+	margin: 0px;
+	padding: 0px;
 }
 
 *::-webkit-scrollbar {

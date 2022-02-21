@@ -37,19 +37,53 @@ export const BoardColumn = (props: AllProps) => {
 			const oldOrderNumber = dragColumn.orderNumber
 			const newOrderNumber = props.orderNumber
 			
-			newBoards = newBoards.map(e => {
-				if(e.orderNumber == oldOrderNumber) {
-					return {...e, ...{orderNumber: newOrderNumber}}
-				}
-				else if(e.orderNumber == newOrderNumber){
-					return {...e, ...{orderNumber: oldOrderNumber}}
-				}
-				else return e
-			})
+			// newBoards = newBoards.map(e => {
+			// 	if(e.orderNumber == oldOrderNumber) {
+			// 		return {...e, ...{orderNumber: newOrderNumber}}
+			// 	}
+			// 	else if(e.orderNumber == newOrderNumber){
+			// 		return {...e, ...{orderNumber: oldOrderNumber}}
+			// 	}
+			// 	else return e
+			// })
 	
-			newBoards = newBoards.sort((a, b) => a.orderNumber - b.orderNumber)
+			// for(let i = 0; i < newBoards.length; i++) {
+			// 	if(newBoards[i].id == props.boardID){
+			// 		// newBoards.splice(i, 0, props) 
+			// 		// console.log(props)
+			// 	}
+			// }
+
+			// newBoards.forEach((board, i) => {
+			// 	if(board.id === dragColumn.boardID){
+			// 		// console.log(i)
+			// 		newBoards.splice(i, 1)
+			// 	}
+			// })
+
+			newBoards = newBoards.filter(e => e.id != dragColumn.boardID)
+
+			// newBoards.forEach((board, i) => {
+			// 	if(board.id === props.boardID){
+			// 		console.log(i)
+			// 		// console.log(dragColumn)
+			// 		newBoards.splice(i, 0, dragColumn)
+			// 	}
+			// })
+
+			for(let i = 0; i < newBoards.length; i++){
+				if(newBoards[i].id === props.boardID) {
+					// newBoards.splice(i, 0, {...dragColumn})
+					console.log(i)
+					break
+				}
+			}
+
+			console.log(newBoards)
 			setBoards(newBoards)
-			localStorage.setItem('boardsList', JSON.stringify(newBoards))
+
+			// newBoards = newBoards.sort((a, b) => a.orderNumber - b.orderNumber)
+			// localStorage.setItem('boardsList', JSON.stringify(newBoards))
 		}
 	}
 
@@ -73,7 +107,7 @@ export const BoardColumn = (props: AllProps) => {
 			}
 		})
 
-		console.log(newBoards)
+		// console.log(newBoards)
 		setBoards(newBoards)
 	}
 
@@ -112,7 +146,7 @@ export const BoardColumn = (props: AllProps) => {
                 return board
             })
 
-            console.log(newBoards)
+            // console.log(newBoards)
             setBoards(newBoards)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
 			
@@ -152,6 +186,7 @@ export const BoardColumn = (props: AllProps) => {
 						<input 
 							type={'text'} 
 							value={titleInput} 
+							placeholder={'Введите заголовок'}
 							onChange={(e) => boardTitleInputHandler(e.target.value)}
 						/>
 					</div>

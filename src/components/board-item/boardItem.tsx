@@ -183,7 +183,7 @@ export const BoardItem = (props: AllProps) => {
                 return board
             })
 
-            console.log(newBoards)
+            // console.log(newBoards)
             setBoards(newBoards)
             setCardEditMod(false)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
@@ -254,7 +254,7 @@ export const BoardItem = (props: AllProps) => {
                                 <div
                                     className={styles.settingsIcon}
                                     draggable={false}
-                                    onDrop={e => false}
+                                    // onDrop={e => false}
                                     onClick={() => optionsButtonHandler()}
                                 >
                                     ...
