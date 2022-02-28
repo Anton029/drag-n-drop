@@ -21,7 +21,7 @@
     padding: 10px;
     cursor: pointer;
     user-select: contain;
-    box-shadow: 0px 0px 5px #949494;
+    box-shadow: 0 0 5px rgb(157 157 149 / 30%);
 }
 
 .itemDragOver {
@@ -37,6 +37,7 @@
     max-width: 100%;
     height: fit-content;
     pointer-events: none;
+    word-break: break-all;
 }
 
 .title {
@@ -244,4 +245,5 @@ input, textarea::-webkit-scrollbar-thumb {
     font-size: 20px;
     color: rgb(34, 34, 34);
     transition: 0.3s all;
+    pointer-events: all
 }

@@ -12,29 +12,43 @@ interface AllProps {
     editMod: boolean
 }
 
-const dragOverHandler = (e) => {
-    e.preventDefault()
-    e.target.classList.add(`${styles.itemDragOver}`)
-}
-
-const dragLeaveHandler = (e) => {
-    e.preventDefault()
-    e.target.classList.remove(`${styles.itemDragOver}`)
-}
-
 export const BoardItem = (props: AllProps) => {
 
     const globalState = useContext(globalStateContext)
     
-    const { boards, setBoards, dragCard, setDragCard, cardDragLock, setCardDragLock, setColumnDragLock } = globalState
+    const   {   
+                boards, 
+                setBoards, 
+                dragCard, 
+                setDragCard, 
+                cardDragLock, 
+                setCardDragLock, 
+                columnDropLock, 
+                setColumnDropLock, 
+                cardDropLock     
+    
+            } = globalState
 
-    const dragStartHandler = (card) => {
+    const dragOverHandler = (e) => {
+        e.preventDefault()
+        
+        if(!cardDropLock) {
+            e.target.classList.add(`${styles.itemDragOver}`)
+        }
+    }
+    
+    const dragLeaveHandler = (e) => {
+        e.preventDefault()
+        e.target.classList.remove(`${styles.itemDragOver}`)
+    }
+
+    const dragStartHandler = (e, card) => {
+        e.stopPropagation()
         setDragCard(card)
         setCardDragLock(true)
     }
 
     const dragEndHandler = () => {
-        console.log('end drag')
         setCardDragLock(false)
     }
 
@@ -43,7 +57,7 @@ export const BoardItem = (props: AllProps) => {
         e.target.classList.remove(`${styles.itemDragOver}`)
         setCardDragLock(false)
 
-        if(card.id != dragCard.id){
+        if(card.id != dragCard.id && !cardDropLock){
 
             let newBoards = [...boards]
 
@@ -51,20 +65,23 @@ export const BoardItem = (props: AllProps) => {
                 return {...e, ...{cardsList: e.cardsList.filter(item => item.id != dragCard.id)}}
             })
     
-            newBoards.forEach(e => {
-                if(e.id == props.parentBoardID){
-                    let boardList = e.cardsList
+            newBoards.forEach(board => {
+                if(board.boardID === card.parentBoardID){
+                    let boardList = board.cardsList
 
-                    for(let i = 0; i < boardList.length; i++){
-                        if(boardList[i].id == card.id) {
-                            boardList.splice(i + 1, 0, dragCard)
-                            break
+                    if(boardList.length > 0){
+                        for(let i = 0; i < boardList.length; i++){
+                            if(boardList[i].id == card.id) {
+                                boardList.splice(i, 0, dragCard)
+                                break
+                            }
                         }
+                    }
+                    else {
+                        newBoards.push(dragCard)
                     }
                 }
             })
-
-            newBoards.push()
 
             setBoards(newBoards)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
@@ -82,7 +99,7 @@ export const BoardItem = (props: AllProps) => {
         })
 
         newBoards.forEach(e => {
-            if(e.id == props.parentBoardID){
+            if(e.boardID == props.parentBoardID){
                 e.cardsList.push(dragCard)
             }
         })
@@ -90,24 +107,25 @@ export const BoardItem = (props: AllProps) => {
         setBoards(newBoards)
     }
 
-    const ColumnDragLockHandler = (e) => {
-        setColumnDragLock(true)
+    const mouseEnterHandler = (e) => {
+        setColumnDropLock(true)
     }
 
-    const ColumnDragUnlockHandler = (e) => {
-        setColumnDragLock(false)
+    const mouseLeaveHandler = (e) => {
+        setColumnDropLock(false)
     }
 
     const deleteCardHanlder = () => {
         let newBoards = [...boards]
 
-
         newBoards = newBoards.map(e => {
-            return {...e, ...{cardsList: e.cardsList.filter(item => item.id != props.id)}}
+            return {...e, ...{cardsList: e.cardsList.filter(item => item.id !== props.id)}}
         })
 
         setBoards(newBoards)
         localStorage.setItem('boardsList', JSON.stringify(newBoards))
+        setCardDragLock(false)
+        setColumnDropLock(false)
     }
 
     const [ cardEditMod, setCardEditMod ] = useState(props.editMod)
@@ -119,27 +137,23 @@ export const BoardItem = (props: AllProps) => {
 
     const cardEditModHandler = () => {
 
-        // let newBoards = [...boards]
+        let newBoards = [...boards]
 
-        // newBoards = newBoards.map(board => {
-        //     if(board.id == props.parentBoardID){
-        //         board.cardsList = board.cardsList.map(e => 
-        //             {
-        //                 if(e.id == props.id) {
-        //                     return {...e, ...{editMod: !cardEditMod}}
-        //                 }
-        //                 else return e
-        //             }
-        //         )
-        //     }
-        //     return board
-        // })
+        newBoards = newBoards.map(board => {
+            if(board.id == props.parentBoardID){
+                board.cardsList = board.cardsList.map(e => 
+                    {
+                        if(e.id == props.id) {
+                            return {...e, ...{editMod: !cardEditMod}}
+                        }
+                        else return e
+                    }
+                )
+            }
+            return board
+        })
 
-        // console.log(newBoards)
-
-        // localStorage.setItem('boardsList', JSON.stringify(newBoards))
-
-        
+        localStorage.setItem('boardsList', JSON.stringify(newBoards))
         setCardEditMod(!cardEditMod)
         setOptionsPopupOpen(false)
     }
@@ -170,20 +184,19 @@ export const BoardItem = (props: AllProps) => {
             let newBoards = [...boards]
 
             newBoards = newBoards.map(board => {
-                if(board.id == props.parentBoardID){
-                    board.cardsList = board.cardsList.map(e => 
-                        {
-                            if(e.id == props.id) {
-                                return {...e, ...{title: titleInput, description: descriptionInput, editMod: false}}
+                if(board.boardID == props.parentBoardID){
+                    board = {...board, ...{cardsList: board.cardsList.map(e => 
+                            {
+                                if(e.id == props.id) {
+                                    return {...e, ...{title: titleInput, description: descriptionInput, editMod: false}}
+                                }
+                                else return e
                             }
-                            else return e
-                        }
-                    )
+                        )}}
                 }
                 return board
             })
 
-            // console.log(newBoards)
             setBoards(newBoards)
             setCardEditMod(false)
             localStorage.setItem('boardsList', JSON.stringify(newBoards))
@@ -199,20 +212,20 @@ export const BoardItem = (props: AllProps) => {
                 <div
                     className={styles.boardITemInnerWrapper}
                     draggable={true}
-                    onDragStart={() => dragStartHandler(props)}
+                    onDragStart={(e) => dragStartHandler(e, props)}
                     onDragEnd={() => dragEndHandler()}
                     onDrop={e => dropHandler(e, props)}
                     onDragOver={e => dragOverHandler(e)}
                     onDragLeave={e => dragLeaveHandler(e)}
-                    onMouseEnter={e => ColumnDragLockHandler(e)}
-                    onMouseLeave={e => ColumnDragUnlockHandler(e)}
+                    onMouseEnter={e => mouseEnterHandler(e)}
+                    onMouseLeave={e => mouseLeaveHandler(e)}
                 >
                     <div className={styles.titleWrapper}>
                         {!cardEditMod ? 
                             <div className={styles.title}>
                                 {props.title}
                             </div>
-                            :
+                        :
                             <div className={styles.titleInputWrapper}>
                                 <textarea 
                                     onChange={(e) => cardTitleInputHandler(e.target.value)}
