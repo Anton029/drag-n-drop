@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import styles from './style.module.css';
+import styles from './style.module.scss';
 import classNames from 'classnames';
 import { globalStateContext } from '../../globalState/globalState';
 
@@ -267,7 +267,6 @@ export const BoardItem = (props: AllProps) => {
                                 <div
                                     className={styles.settingsIcon}
                                     draggable={false}
-                                    // onDrop={e => false}
                                     onClick={() => optionsButtonHandler()}
                                 >
                                     ...

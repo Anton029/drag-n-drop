@@ -16,7 +16,7 @@ import defaultBG_8 from './assets/pictures/board_bg_8.jpg'
 import defaultBG_9 from './assets/pictures/board_bg_9.jpg'
 
 
-const bgList = [defaultBG_1, defaultBG_2, defaultBG_3, defaultBG_4, defaultBG_5, defaultBG_6, defaultBG_7, defaultBG_8, defaultBG_9 ]
+const bgList = [ defaultBG_1, defaultBG_2, defaultBG_3, defaultBG_4, defaultBG_5, defaultBG_6, defaultBG_7, defaultBG_8, defaultBG_9 ]
 
 function App() {
 
